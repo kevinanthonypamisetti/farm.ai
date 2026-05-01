@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Farm.ai</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="profile-pic" style="flex:none;">👨‍🌾</div>
+    <div class="logo" style="flex:1; text-align:center;">Farm.ai</div>
+    <div id="google_translate_element" style="transform: scale(0.8); transform-origin: right top;"></div>
+  </header>
+
+  <!-- SCREENS -->
+  <main id="app-content">
+    
+    <!-- DASHBOARD SCREEN -->
+    <div id="screen-dashboard" class="screen active">
+      <div class="welcome-text">
+        <div class="sub">WELCOME BACK,</div>
+        <div class="name">Arthur Harrison</div>
+      </div>
+
+      <div class="card ai-insight">
+        <div class="insight-badge">
+          <div class="icon-sq">🧠</div>
+          <span class="gold-text">AI PRIORITY INSIGHT</span>
+          <div class="dot"></div>
+        </div>
+        <h3>Market peak predicted:<br>Sell tomatoes in 3 days.</h3>
+        <p>Local demand is surging due to supply shortages in adjacent districts. Expected profit increase: 14%.</p>
+        <button class="btn-gold">View Market Analytics</button>
+      </div>
+
+      <div class="card weather-card">
+        <div class="weather-left">
+          <span class="w-icon">⛈️</span>
+          <div class="w-info">
+            <div class="temp" id="live-temp">--°C</div>
+            <div class="desc" id="live-desc">Loading live weather...</div>
+          </div>
+        </div>
+        <div class="weather-alert">
+          <span class="alert-title">RAIN ALERT</span>
+          <span class="alert-desc">Harvest before 4PM</span>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <div class="action-btn" onclick="navTo('scanner')"><span>📷</span><br>Scan Crop</div>
+        <div class="action-btn" onclick="navTo('profit')"><span>🧮</span><br>Calculate Profit</div>
+        <div class="action-btn" onclick="navTo('market')"><span>💵</span><br>Sell Produce</div>
+        <div class="action-btn" onclick="navTo('guide')"><span>📖</span><br>Grow Guides</div>
+      </div>
+
+      <div style="margin: 0 24px 16px; font-family:'Playfair Display'; font-size: 20px; font-weight:700;">Farm Topology</div>
+      <div id="farm-map" style="height: 200px; border-radius: 12px; margin: 0 24px 20px; border: 1px solid #e0dbce; z-index:1;"></div>
+
+      <div class="card fields-card">
+        <div class="fields-header">
+          <h3>Your Fields</h3>
+          <a href="#" class="gold-link">Manage All</a>
+        </div>
+        <div class="field-item">
+          <div class="f-top"><span>🪴 Tomato Field A-1</span> <span class="status green">HEALTHY</span></div>
+          <div class="progress-bar"><div class="fill green" style="width:85%"></div></div>
+        </div>
+        <div class="field-item">
+          <div class="f-top"><span>🌾 Winter Wheat</span> <span class="status gold">MONITOR</span></div>
+          <div class="progress-bar"><div class="fill gold" style="width:60%"></div></div>
+        </div>
+        <div class="field-item">
+          <div class="f-top"><span>🧅 Red Onion Strip</span> <span class="status red">AT RISK</span></div>
+          <div class="progress-bar"><div class="fill red" style="width:30%"></div></div>
+        </div>
+      </div>
+
+      <div class="hero-image"></div>
+    </div>
+
+
+    <!-- SCANNER SCREEN -->
+    <div id="screen-scanner" class="screen">
+      <div class="scanner-view">
+        <div class="glass-pill top-right">⭐ <span>System Status<br><strong>AI Ready</strong></span></div>
+        <div class="vision-active">AI VISION ACTIVE</div>
+        <div class="bounding-box"></div>
+        <div class="scan-actions">
+          <button class="btn-gold" style="width:48%">📷 Open Camera</button>
+          <button class="btn-white" style="width:48%" onclick="document.getElementById('file-upload').click()">🖼️ Upload</button>
+          <input type="file" id="file-upload" hidden onchange="handleScan(event)">
+        </div>
+      </div>
+
+      <div class="scanner-content">
+        <h4>Supported Crops</h4>
+        <div class="crop-pills">
+          <div class="cpill">🍅 Tomato</div>
+          <div class="cpill">🌾 Wheat</div>
+          <div class="cpill">🍚 Rice</div>
+          <div class="cpill">🌽 Corn</div>
+          <div class="cpill">🧅 Onion</div>
+          <div class="cpill">🥔 Potato</div>
+          <div class="cpill">🌶️ Chilli</div>
+          <div class="cpill">🥬 Spinach</div>
+          <div class="cpill" onclick="navTo('guide')">+ All Crops</div>
+        </div>
+
+        <div class="fields-header" style="margin-top:24px;">
+          <h4 style="margin:0;font-family:'Playfair Display',serif">Recent Scans</h4>
+          <a href="#" class="gold-link">View All</a>
+        </div>
+        
+        <div id="scan-results" style="margin-top:10px;">
+          <!-- Fetched dynamically -->
+          <div class="card recent-scan-card" style="display:flex; gap:16px;">
+            <div class="thumb" style="width:60px;height:60px;background:#1A2F25;border-radius:8px"></div>
+            <div style="flex:1">
+              <div style="display:flex; justify-content:space-between">
+                <h4 style="margin:0;font-family:'Playfair Display'">Tomato Leaf</h4>
+                <span style="font-size:12px;color:#888">2h ago</span>
+              </div>
+              <div style="margin-top:8px; display:flex; gap:10px; align-items:center;">
+                <span class="status green bg" style="font-size:10px;">HEALTHY</span>
+                <span style="font-style:italic; font-size:12px; color:#666">98% confidence</span>
+              </div>
+            </div>
+            <div style="align-self:center; color:#ccc;">></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFIT CALCULATOR SCREEN -->
+    <div id="screen-profit" class="screen" style="padding:0 24px;">
+      <h2 style="font-family:'Playfair Display'; font-size:28px; margin-top:10px; margin-bottom:8px">Profit Calculator</h2>
+      <p style="color:#666; font-size:14px; margin-bottom:24px; max-width:280px">Model your agricultural outcomes with precision-driven insights.</p>
+
+      <div class="card">
+        <h4 style="font-family:'Playfair Display'; margin-top:0;">Input Parameters</h4>
+        
+        <label class="lbl">CROP VARIETY</label>
+        <select class="inp" id="pc-crop">
+          <option>Premium Basmati Rice</option>
+          <option>Tomato</option>
+          <option>Wheat</option>
+          <option>Maize</option>
+          <option>Sugarcane</option>
+          <option>Finger Millet (Ragi)</option>
+          <option>Red Onion</option>
+          <option>Potato</option>
+          <option>Green Chilli</option>
+          <option>Cotton</option>
+          <option>Soybean</option>
+        </select>
+        
+        <div style="display:flex; gap:16px;">
+          <div style="flex:1">
+            <label class="lbl">LAND SIZE</label>
+            <div style="display:flex; border-bottom:1px solid #ccc; padding-bottom:4px; align-items:flex-end;">
+              <input type="number" id="pc-land" value="12.5" style="border:none;background:transparent;width:100%;font-size:16px;">
+              <span style="font-size:12px;color:#888;">Acres</span>
+            </div>
+          </div>
+          <div style="flex:1">
+            <label class="lbl">SOIL HEALTH</label>
+            <div style="display:flex; border-bottom:1px solid #ccc; padding-bottom:4px; align-items:flex-end;">
+              <span style="font-size:16px;width:100%">Grade A</span>
+              <span style="font-size:12px;color:#C89B3C;">🥇</span>
+            </div>
+          </div>
+        </div>
+
+        <label class="lbl" style="margin-top:20px;">COST BREAKDOWN (PER ACRE)</label>
+        <div class="cost-row"><span>Seeds & Seedlings</span> <strong>₹2,400</strong></div>
+        <div class="cost-row"><span>Fertilizers & Nutrients</span> <strong>₹3,100</strong></div>
+        <div class="cost-row"><span>Labor & Irrigation</span> <strong>₹1,800</strong></div>
+
+        <button class="btn-gold" style="margin-top:20px; width:100%" onclick="calculateProfitData()">UPDATE FORECASTS</button>
+      </div>
+
+      <h4 style="font-family:'Playfair Display'; margin:24px 0 16px;">Scenario Modeling</h4>
+      <div id="profit-sim-results">
+        <div class="card" style="padding:16px; position:relative;">
+          <div style="position:absolute; top:0; right:0; background:#8a6a1c; color:white; padding:4px 12px; font-size:12px; border-bottom-left-radius:8px; border-top-right-radius:12px;">Likelihood: 72%</div>
+          <span style="font-size:12px; color:#666;">EXPECTED OUTLOOK</span>
+          <div style="font-family:'Playfair Display'; font-size:32px; margin-top:4px;" id="val-expected">₹1,42,500 <span style="font-size:14px; font-family:'Inter'; color:#888">net profit</span></div>
+          <div style="height:4px; background:#ddd; margin-top:12px; border-radius:2px;"><div style="width:65%; height:100%; background:#8a6a1c; border-radius:2px;"></div></div>
+        </div>
+        
+        <div style="display:flex; gap:16px; margin-top:16px;">
+          <div class="card" style="flex:1; padding:16px;">
+            <span style="font-size:11px; color:#888;">WORST CASE</span>
+            <div style="font-family:'Playfair Display'; font-size:20px; color:#D32F2F; margin:4px 0;" id="val-worst">₹89,000</div>
+            <span style="font-size:10px; color:#ccc;">Low yield, high rain</span>
+          </div>
+          <div class="card" style="flex:1; padding:16px;">
+            <span style="font-size:11px; color:#888;">BEST CASE</span>
+            <div style="font-family:'Playfair Display'; font-size:20px; margin:4px 0;" id="val-best">₹1,94,000</div>
+            <span style="font-size:10px; color:#ccc;">Optimal conditions</span>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:16px; margin-top:16px;">
+           <div class="card" style="flex:1; padding:16px; display:flex; flex-direction:column; align-items:center;">
+             <div class="roi-circle">38%</div>
+             <span style="font-size:10px; color:#666; margin-top:12px;">PROJECTED ROI</span>
+           </div>
+           <div class="card" style="flex:1; padding:16px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+             <div style="font-family:'Playfair Display'; font-size:20px;" id="val-be">₹1,120 <span style="font-size:12px; font-family:'Inter'">/ton</span></div>
+             <span style="font-size:10px; color:#666; margin-top:8px;">BREAK-EVEN PRICE</span>
+           </div>
+        </div>
+      </div>
+
+      <!-- Advice Card -->
+      <div class="advice-card" style="margin-top:24px; position:relative;">
+        <button onclick="speakText(document.getElementById('profit-advice-text').innerText)" style="position:absolute; right:16px; top:16px; background:none; border:none; color:white; font-size:20px;">🔊</button>
+        <h3 style="font-family:'Playfair Display'; font-style:italic; color:white; margin-top:0;">✦ Krishi-Veer Advice</h3>
+        <div id="profit-advice-text">
+          <p>Based on your 12.5-acre plot and the current nutrient levels, your profit margin is being constrained by high fertilizer expenditure. I recommend a <strong>Precision Nitrogen Injection</strong> technique.</p>
+          <p>By switching to a subsurface applicator, you can reduce waste by 14%, potentially adding ₹21,000 to your net bottom line this season.</p>
+        </div>
+      </div>
+      <div style="height:100px;"></div>
+    </div>
+
+
+    <!-- PROFILE SCREEN -->
+    <div id="screen-profile" class="screen" style="padding:0 24px;">
+      <h2 style="font-family:'Playfair Display'; font-size:28px; margin-top:10px; margin-bottom:8px">Farmer Profile</h2>
+      
+      <div class="card" style="display:flex; align-items:center; gap:16px; margin-bottom:24px;">
+        <div style="font-size:48px; background:#e0dbce; width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center;">👨‍🌾</div>
+        <div>
+          <h3 style="margin:0; font-family:'Playfair Display'; font-size:20px;">Arthur Harrison</h3>
+          <span style="font-size:12px; color:var(--green); display:block; margin:4px 0;">✓ OTP Verified Mobile</span>
+          <span style="font-size:12px; color:#888;">+91 98765 43210</span>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:24px;">
+        <div class="card" style="margin:0; padding:16px;">
+          <span style="font-size:10px; color:#888;">LOCATION</span>
+          <h4 style="margin:4px 0 0; font-family:'Playfair Display'">Nashik, MH</h4>
+        </div>
+        <div class="card" style="margin:0; padding:16px;">
+          <span style="font-size:10px; color:#888;">LAND SIZE</span>
+          <h4 style="margin:4px 0 0; font-family:'Playfair Display'">12.5 Acres</h4>
+        </div>
+      </div>
+
+      <div class="card">
+        <span style="font-size:10px; color:#888;">CROPS GROWN</span>
+        <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+          <span class="cpill">🍅 Tomato</span>
+          <span class="cpill">🌾 Wheat</span>
+          <span class="cpill">🧅 Onion</span>
+        </div>
+      </div>
+
+      <h4 style="font-family:'Playfair Display'; margin:24px 0 16px;">Government Schemes</h4>
+      <div class="card scheme-card" style="margin-bottom:12px;">
+        <div class="s-badge gold">✓ YOU QUALIFY</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:12px;">
+          <div><h3 style="font-family:'Playfair Display'; margin:0">PM-KISAN</h3><p style="font-size:12px; color:#666; margin:4px 0">Income Support Scheme</p></div>
+          <div style="text-align:right"><h3 style="margin:0">₹6,000</h3><span style="font-size:10px; color:#888">PER YEAR</span></div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:16px;">
+          <button class="btn-dark" style="flex:1">APPLY NOW</button>
+        </div>
+      </div>
+      <div class="card scheme-card" style="margin-bottom:12px;">
+        <div class="s-badge gold">✓ YOU QUALIFY</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:12px;">
+          <div><h3 style="font-family:'Playfair Display'; margin:0">PM Fasal Bima Yojana</h3><p style="font-size:12px; color:#666; margin:4px 0">Crop Insurance</p></div>
+          <div style="text-align:right"><h3 style="margin:0; font-family:'Playfair Display'">MAX</h3><span style="font-size:10px; color:#888">COVERAGE</span></div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:16px;">
+          <button class="btn-dark" style="flex:1">APPLY NOW</button>
+        </div>
+      </div>
+
+      <div style="height:100px;"></div>
+    </div>
+
+    <!-- PLANNER SCREEN -->
+    <div id="screen-planner" class="screen" style="padding:0 24px;">
+      <h2 style="font-family:'Playfair Display'; font-size:28px; margin-top:10px; margin-bottom:8px">Select Livestock</h2>
+      <p style="color:#666; font-size:14px; margin-bottom:24px;">Choose animals to include in your farm cycle.</p>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:24px;">
+        <div class="ls-card" onclick="toggleLs(this)"><div class="ls-icon">🐾</div><div class="ls-name" data-val="Cow">Cow</div><div class="ls-sub">Milk + Dung</div></div>
+        <div class="ls-card active" style="background:#f2fae6; border:1px solid #C89B3C;" onclick="toggleLs(this)"><div class="ls-icon">🥛</div><div class="ls-name" data-val="Buffalo">Buffalo</div><div class="ls-sub" style="color:#8a6a1c">High Fat Content</div></div>
+        <div class="ls-card" onclick="toggleLs(this)"><div class="ls-icon">🐐</div><div class="ls-name" data-val="Goat">Goat</div><div class="ls-sub">Low Maintenance</div></div>
+        <div class="ls-card" onclick="toggleLs(this)"><div class="ls-icon">🥚</div><div class="ls-name" data-val="Poultry">Poultry</div><div class="ls-sub">Quick Returns</div></div>
+      </div>
+
+      <div class="card" style="margin:0; padding:24px;">
+        <h4 style="font-family:'Playfair Display'; margin-top:0;">Farm Infrastructure</h4>
+        
+        <div style="display:flex; gap:16px; margin-bottom:16px;">
+          <div style="flex:1">
+            <label class="lbl">Total Land (acres)</label>
+            <input type="text" id="ls-land" class="inp" value="12" style="background:white; padding:10px; border:1px solid #ccc; margin:0; border-radius:4px">
+          </div>
+          <div style="flex:1">
+            <label class="lbl">Fodder Area (acres)</label>
+            <input type="text" id="ls-fodder" class="inp" value="3-5" style="background:white; padding:10px; border:1px solid #ccc; margin:0; border-radius:4px">
+          </div>
+        </div>
+        
+        <label class="lbl">Budget [₹]</label>
+        <input type="text" id="ls-budget" class="inp" value="4,50,000" style="background:white; padding:10px; border:1px solid #ccc; margin-bottom:16px; border-radius:4px">
+        
+        <label class="lbl">Main Crops</label>
+        <input type="text" id="ls-crops" class="inp" value="Wheat, Sugarcane, Maize" style="background:white; padding:10px; border:1px solid #ccc; margin-bottom:20px; border-radius:4px">
+
+        <button class="btn-gold" style="width:100%" onclick="planLivestock()">📋 Plan My Livestock</button>
+      </div>
+
+      <div id="ls-ai-result" style="display:none; margin-top:24px;">
+        <div class="advice-card" style="padding:24px; position:relative;">
+          <span style="font-size:10px; color:#C89B3C; font-weight:bold; letter-spacing:1px; display:block; margin-bottom:12px;">✦ AI Recommended Plan</span>
+          <div style="font-family:'Playfair Display'; font-size:24px; margin-bottom:16px;" id="ls-res-plan">4-6 <span style="font-size:18px; font-family:'Inter'; color:#ddd">Murrah Buffaloes</span></div>
+          
+          <div style="height:1px; background:rgba(255,255,255,0.1); margin-bottom:16px;"></div>
+          
+          <div style="display:flex; justify-content:space-between;">
+            <div>
+              <span style="font-size:10px; color:#aaa;">Est. Monthly Income</span>
+              <div style="font-family:'Playfair Display'; font-size:20px; color:#C89B3C" id="ls-res-inc">₹12,500</div>
+            </div>
+            <div>
+              <span style="font-size:10px; color:#aaa;">Break-even</span>
+              <div style="font-family:'Playfair Display'; font-size:20px; color:white" id="ls-res-be">8 Months</div>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-top:16px; background:#EBE7DD; padding:16px; border-radius:12px; border: 1px dashed #ccc;">
+          <span style="font-size:12px; font-weight:bold; margin-bottom:12px; display:block;">🔄 Circular Integration</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; text-align:center;">
+            <div style="background:white; font-size:9px; padding:10px; border-radius:8px;">♻️<br>WASTE TO<br>COMPOST</div>
+            <div style="color:#aaa;">➔</div>
+            <div style="background:white; font-size:9px; padding:10px; border-radius:8px;">🌱<br>BETTER<br>YIELDS</div>
+            <div style="color:#aaa;">➔</div>
+            <div style="background:white; font-size:9px; padding:10px; border-radius:8px;">🌾<br>CROP TO<br>FODDER</div>
+          </div>
+        </div>
+        
+        <div style="margin-top:16px; background:#e6f5d0; padding:20px; border-radius:12px; margin-bottom:100px;">
+          <div style="height:120px; background:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&fit=crop') center/cover; border-radius:8px; margin-bottom:16px;"></div>
+          <span style="background:#1A2F25; color:white; font-size:10px; padding:4px 8px; border-radius:10px;">Pro Tip</span>
+          <h3 style="font-family:'Playfair Display'; margin:12px 0 8px; color:#1A2F25;" id="ls-tip-title">The Golden Rule of Circular Farming</h3>
+          <p style="font-size:12px; color:#223d30; line-height:1.6;" id="ls-tip-text">Using manure from 4 buffaloes can reduce your urea dependency by up to 60% across 10 acres of wheat, creating a self-sustaining nutrient cycle that boosts soil health and saves ₹22,000 annually.</p>
+        </div>
+      </div>
+    </div>
+    <!-- GUIDE SCREEN -->
+    <div id="screen-guide" class="screen" style="padding:0 24px;">
+      <h2 style="font-family:'Playfair Display'; font-size:28px; margin-top:10px; margin-bottom:8px">Crop Encyclopedia</h2>
+      <p style="color:#666; font-size:14px; margin-bottom:24px;">Learn how to grow all types of crops with expert AI recommendations adjusted to your climate.</p>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+        <div class="card" style="padding:16px; margin:0; text-align:center;">
+          <div style="font-size:32px; margin-bottom:8px;">🌾</div>
+          <h4 style="font-family:'Playfair Display'; margin:0">Wheat</h4>
+          <span style="font-size:10px; color:#888;">Winter Crop</span>
+        </div>
+        <div class="card" style="padding:16px; margin:0; text-align:center;">
+          <div style="font-size:32px; margin-bottom:8px;">🍅</div>
+          <h4 style="font-family:'Playfair Display'; margin:0">Tomato</h4>
+          <span style="font-size:10px; color:#888;">High Yield</span>
+        </div>
+        <div class="card" style="padding:16px; margin:0; text-align:center;">
+          <div style="font-size:32px; margin-bottom:8px;">🌽</div>
+          <h4 style="font-family:'Playfair Display'; margin:0">Maize</h4>
+          <span style="font-size:10px; color:#888;">Staple</span>
+        </div>
+        <div class="card" style="padding:16px; margin:0; text-align:center;">
+          <div style="font-size:32px; margin-bottom:8px;">🍚</div>
+          <h4 style="font-family:'Playfair Display'; margin:0">Rice</h4>
+          <span style="font-size:10px; color:#888;">Kharif Crop</span>
+        </div>
+        <div class="card" style="padding:16px; margin:0; text-align:center;">
+          <div style="font-size:32px; margin-bottom:8px;">🥔</div>
+          <h4 style="font-family:'Playfair Display'; margin:0">Potato</h4>
+          <span style="font-size:10px; color:#888;">Root Crop</span>
+        </div>
+        <div class="card" style="padding:16px; margin:0; text-align:center;">
+          <div style="font-size:32px; margin-bottom:8px;">🧅</div>
+          <h4 style="font-family:'Playfair Display'; margin:0">Onion</h4>
+          <span style="font-size:10px; color:#888;">Cash Crop</span>
+        </div>
+      </div>
+      
+      <div class="card" style="margin:24px 0; background:#f2fae6; border:1px solid var(--green);">
+        <h4 style="font-family:'Playfair Display'; margin-top:0;">Ask the AI Advisor</h4>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="ai-guide-input" class="inp" placeholder="e.g. How do I plant sugarcane?" style="background:white; padding:12px; border-radius:8px; border:1px solid #ccc; margin:0; flex:1;">
+          <button onclick="startVoiceGuide()" style="padding:10px 16px; font-size:18px; border-radius:8px; background:var(--green); color:white; border:none;">🎙️</button>
+        </div>
+        <button class="btn-dark" style="width:100%; border-radius:8px; margin-top:10px;">Get Growing Guide</button>
+      </div>
+
+      <div style="height:100px;"></div>
+    </div>
+
+    <!-- MARKET SCREEN -->
+    <div id="screen-market" class="screen" style="padding:0 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="font-family:'Playfair Display'; font-size:28px; margin-top:10px; margin-bottom:8px">Marketplace</h2>
+      </div>
+      <p style="color:#666; font-size:14px; margin-bottom:24px;">Direct buying and selling at current Mandi prices.</p>
+
+      <div class="action-btn" style="background:#1A2F25; color:white; margin:0 0 24px; text-align:center; padding:16px; border-radius:12px;">
+        <span style="font-size:24px; margin-bottom:4px; display:block;">📦 Sell Your Produce</span>
+        <div style="font-size:12px; color:#ccc;">Create an auction or sell to verified buyers.</div>
+      </div>
+
+      <h4 style="font-family:'Playfair Display'; margin:0 0 16px;">Live Market Rates</h4>
+      <div class="card" style="margin:0 0 12px; display:flex; justify-content:space-between; align-items:center; padding:16px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="font-size:24px;">🍅</div>
+          <div><h4 style="margin:0;">Tomato (Desi)</h4><span style="font-size:11px; color:#888;">Nashik APMC</span></div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Playfair Display'; font-size:18px; color:var(--green);">₹35 <span style="font-size:12px; font-family:'Inter'">/kg</span></div>
+          <span style="font-size:10px; color:var(--green);">▲ 2.4%</span>
+        </div>
+      </div>
+      <div class="card" style="margin:0 0 12px; display:flex; justify-content:space-between; align-items:center; padding:16px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="font-size:24px;">🧅</div>
+          <div><h4 style="margin:0;">Red Onion</h4><span style="font-size:11px; color:#888;">Pimpalgaon APMC</span></div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Playfair Display'; font-size:18px; color:var(--red);">₹22 <span style="font-size:12px; font-family:'Inter'">/kg</span></div>
+          <span style="font-size:10px; color:var(--red);">▼ 1.1%</span>
+        </div>
+      </div>
+      <div class="card" style="margin:0 0 12px; display:flex; justify-content:space-between; align-items:center; padding:16px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="font-size:24px;">🌾</div>
+          <div><h4 style="margin:0;">Wheat (Lokwan)</h4><span style="font-size:11px; color:#888;">Indore APMC</span></div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Playfair Display'; font-size:18px; color:var(--green);">₹2,850 <span style="font-size:12px; font-family:'Inter'">/qtl</span></div>
+          <span style="font-size:10px; color:var(--green);">▲ 0.5%</span>
+        </div>
+      </div>
+
+      <div style="height:100px;"></div>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="navTo('dashboard')">
+      <div class="n-icon">🖥</div>
+      <span>OVERVIEW</span>
+    </div>
+    <div class="nav-item" onclick="navTo('planner')">
+      <div class="n-icon">📋</div>
+      <span>PLANNER</span>
+    </div>
+    <div class="nav-item" onclick="navTo('market')">
+      <div class="n-icon">🛒</div>
+      <span>MARKET</span>
+    </div>
+    <div class="nav-item" onclick="navTo('guide')">
+      <div class="n-icon">📖</div>
+      <span>GUIDE</span>
+    </div>
+    <div class="nav-item" onclick="navTo('profit')">
+      <div class="n-icon">🧮</div>
+      <span>ANALYSIS</span>
+    </div>
+    <div class="nav-item" onclick="navTo('profile')">
+      <div class="n-icon">👤</div>
+      <span>PROFILE</span>
+    </div>
+  </nav>
+
+  <script src="app.js"></script>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
