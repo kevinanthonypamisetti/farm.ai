@@ -1,102 +1,205 @@
+# 🌾 Farm.ai — KRISHI VEER AI
 
-  # Farm.ai Backend Integration Guide
+**Think Before You Farm 🌱**
 
-We've built the backend you asked for! It runs on **Node.js** with **Express**.
+Farm.ai is an AI-powered agriculture platform designed specifically for Indian farmers. It combines crop intelligence, market insights, and multilingual accessibility to help farmers make smarter, data-driven decisions.
 
-## 1. Start the Backend Server
+---
 
-Navigate to the backend directory and start it up:
+## 🚀 Features
 
-\`\`\`bash
-cd /Users/kevinanthonypamisetti/.gemini/antigravity/scratch/farm-ai/backend
+### 🤖 AI Decision Engine
+
+* Smart recommendations: **SELL · HOLD · GROW**
+* Based on crop, weather, and market trends
+* Simple explanations in regional languages
+
+---
+
+### 📸 Crop Disease Detection
+
+* Upload or capture crop images
+* Detects disease and severity
+* Provides treatment and prevention steps
+* Voice-assisted explanations
+
+---
+
+### 📊 Market Intelligence
+
+* Real-time mandi prices
+* Price trend indicators (↑ ↓)
+* Region-specific recommendations
+
+---
+
+### 💰 Profit Calculator
+
+* Input: land size, crop, investment
+* Output: yield prediction, profit range, risk level
+* AI-based crop strategy suggestions
+
+---
+
+### 🌦 Weather Intelligence
+
+* Live weather updates
+* Rainfall predictions
+* Farming impact alerts
+
+---
+
+### 🗺 Map Integration
+
+* Nearby mandi locations
+* Region-based insights
+* Weather overlays
+
+---
+
+### 🌍 Multilingual + Voice Support
+
+Supports major Indian languages:
+
+* Hindi, Telugu, Tamil, Kannada, Malayalam
+* Marathi, Bengali, Gujarati, Punjabi, Odia
+
+Includes:
+
+* Voice input 🎤
+* Text-to-speech 🔊
+* Low-literacy mode (icon-based UI)
+
+---
+
+## 🧱 Tech Stack
+
+### Frontend
+
+* React (Vite)
+* Tailwind CSS
+* React Router
+* i18next (multilingual)
+* Leaflet (maps)
+
+### Backend
+
+* Node.js
+* Express.js
+* Multer (file uploads)
+* Axios (API calls)
+
+### AI / Data Layer
+
+* Crop disease detection (Computer Vision)
+* Market prediction models
+* Weather APIs integration
+
+---
+
+## 📁 Project Structure
+
+```
+farm-ai/
+├── frontend/        # React + Tailwind UI
+├── backend/         # Express API server
+├── ai-services/     # ML models (optional)
+└── docker/          # Deployment configs
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone Repository
+
+```
+git clone https://github.com/your-username/farm-ai.git
+cd farm-ai
+```
+
+---
+
+### 2️⃣ Backend Setup
+
+```
+cd backend
+npm install
 node index.js
-\`\`\`
-*(Make sure \`npm install\` completes first if it hasn't already).*
+```
 
-The server will run at \`http://localhost:5000\`.
+Runs on: `http://localhost:5000`
 
-web application/stitch/projects/14344145786113587410/screens/6e59242af395416ab82e90a2c76bfcec## 2. Connect Your Frontend
+---
 
-You provided a very advanced front-end HTML file. Towards the bottom of your \`farm-ai.html\` file, you have your Javascript block (e.g., \`<script>\`). Replace your simulated JS functions (like \`askAI\`, \`calculateProfit\`, and \`handleFileUpload\`) with these actual API calls:
+### 3️⃣ Frontend Setup
 
-\`\`\`javascript
-// 1. CHAT / AI RECOMMENDATIONS API
-async function askAI(prompt) {
-  try {
-    const res = await fetch('http://localhost:5000/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, context: { location: "Nashik, Maharashtra" } })
-    });
-    const data = await res.json();
-    
-    // Process response based on your UI
-    // Ex: document.getElementById('ai-action-text').innerText = data.reply;
-    alert("Farm.ai: " + data.reply);
-  } catch (err) {
-    console.error("Chat API failed:", err);
-  }
-}
+```
+cd frontend
+npm install
+npm run dev
+```
 
-// 2. PROFIT CALCULATOR API
-async function calculateProfit() {
-  const crop = document.getElementById('pc-crop').value;
-  const land = document.getElementById('pc-land').value;
-  // Fallbacks if elements are omitted
-  const costs = document.getElementById('pc-seeds')?.value || 5000;
-  const revenue = document.getElementById('pc-price')?.value || 25000;
+Runs on: `http://localhost:5173`
 
-  document.getElementById('profit-results').style.display = 'block';
+---
 
-  try {
-    const res = await fetch('http://localhost:5000/api/profit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ crop, land, costs, revenue })
-    });
-    const data = await res.json();
+## 🔑 Environment Variables
 
-    document.getElementById('pr-revenue').innerText = '₹' + data.revenue;
-    document.getElementById('pr-cost').innerText = '₹' + data.costs;
-    document.getElementById('pr-profit').innerText = '₹' + data.profit;
-    document.getElementById('pr-roi').innerText = 'ROI: ' + data.roi;
-  } catch (err) {
-    console.error("Profit API failed:", err);
-  }
-}
+Create a `.env` file in `/backend`:
 
-// 3. IMAGE SCANNER API 
-async function handleFileUpload(e) {
-  const file = e.target.files?.[0];
-  if(!file) return;
-  
-  const formData = new FormData();
-  formData.append('image', file);
-  
-  // Show UI panel and loading spinner
-  document.getElementById('result-panel').classList.add('show');
-  
-  try {
-    const res = await fetch('http://localhost:5000/api/scan', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    
-    document.getElementById('result-inner').innerHTML = \`
-      <h3 class="result-header">Disease: \${data.disease}</h3>
-      <p class="result-subhead">Confidence: \${data.confidence} | Severity: \${data.severity}</p>
-      <div class="result-content">
-        <strong>Treatment:</strong> \${data.treatment}<br><br>
-        <strong>Estimated Cost:</strong> \${data.estimatedCost}
-      </div>
-    \`;
-  } catch (err) {
-    console.error("Scan API failed:", err);
-    document.getElementById('result-inner').innerHTML = '<p>Scan failed.</p>';
-  }
-}
-\`\`\`
+```
+PORT=5000
+AI_API_KEY=your_api_key
+WEATHER_API_KEY=your_weather_key
+```
 
-## 3. Test!
-Now when you click elements in your UI, they will talk directly to the Node.js backend. You can open up \`backend/index.js\` if you want to extend it, add OpenAI keys, database connections, Authentication, etc.
+---
+
+## 🚀 Deployment
+
+### Frontend
+
+* Deploy on Vercel
+
+### Backend
+
+* Deploy on Render / Railway
+
+---
+
+## ⚡ Performance Goals
+
+* Optimized for low-end Android devices
+* Works on slow internet (3G/4G)
+* Lightweight and fast loading
+
+---
+
+## 🌱 Future Roadmap
+
+* 🧑‍🌾 Farmer community platform
+* 🛒 Agri marketplace
+* 🧾 Government schemes integration
+* 📡 IoT-based smart farming
+* 🎤 Advanced voice AI assistant
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome. Please fork the repository and submit a pull request.
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+## 🙌 Vision
+
+Farm.ai aims to empower farmers across India by making advanced AI technology simple, accessible, and actionable — directly in their hands.
+
+---
