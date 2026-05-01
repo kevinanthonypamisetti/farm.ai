@@ -1,0 +1,142 @@
+:root {
+  --bg-cream: #F8F6F0;
+  --card-cream: #EBE7DD;
+  --white: #FFFFFF;
+  --text-dark: #1A2F25;
+  --gold: #C89B3C;
+  --gold-dark: #8a6a1c;
+  --green: #27A558;
+  --red: #D32F2F;
+  --pink: #FFEBEB;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-cream);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.screen { display: none; padding-top: 10px; }
+.screen.active { display: block; }
+
+/* Header */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+}
+.app-header .logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.profile-pic { font-size: 28px; background: #ddd; border-radius: 50%; height: 36px; width: 36px; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.mic-icon { font-size: 20px; }
+
+/* Dashboard Welcome */
+.welcome-text { padding: 0 24px 20px; }
+.welcome-text .sub { font-size: 10px; color: #888; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.welcome-text .name { font-family: 'Playfair Display', serif; font-size: 26px; }
+
+/* Cards */
+.card {
+  background: var(--card-cream);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0 24px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.ai-insight { position: relative; }
+.insight-badge { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.insight-badge .icon-sq { background: var(--gold); color: white; width: 32px; height: 32px; border-radius: 8px; display:flex; align-items:center; justify-content:center; font-size: 16px; }
+.gold-text { color: var(--gold-dark); font-size: 10px; font-weight: 700; letter-spacing:0.5px; }
+.ai-insight h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin: 0 0 10px; font-weight: 600; line-height: 1.3; }
+.ai-insight p { font-size: 13px; color: #555; line-height: 1.5; margin: 0 0 20px; }
+.ai-insight .dot { position: absolute; top: 20px; right: 20px; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; }
+
+button { cursor: pointer; border: none; font-family: 'Inter', sans-serif; font-weight: 600; border-radius: 8px; padding: 14px; font-size: 14px; transition: 0.2s; }
+.btn-gold { background: var(--gold); color: white; width: 100%; box-shadow: 0 4px 12px rgba(200, 155, 60, 0.2); }
+.btn-white { background: white; color: var(--text-dark); border: 1px solid #ddd; }
+.btn-dark { background: var(--text-dark); color: white; }
+.btn-icon { background: transparent; border: 1px solid #ccc; border-radius: 8px; width: 44px; height: 44px; }
+
+/* Weather Card */
+.weather-card { display: flex; justify-content: space-between; align-items: center; }
+.weather-left { display: flex; align-items: center; gap: 12px; }
+.w-icon { font-size: 24px; color: var(--gold); }
+.w-info .temp { font-size: 20px; font-family: 'Playfair Display', serif; margin-bottom: 2px;}
+.w-info .desc { font-size: 11px; color: #666; }
+.weather-alert { background: var(--pink); padding: 8px 12px; border-radius: 6px; text-align: center; }
+.weather-alert .alert-title { display: block; color: var(--red); font-size: 9px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 2px; }
+.weather-alert .alert-desc { color: var(--red); font-size: 11px; }
+
+/* Quick Actions */
+.quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 24px 20px; }
+.action-btn { background: var(--card-cream); border-radius: 12px; padding: 20px 0; text-align: center; font-size: 12px; color: var(--text-dark); border: 1px solid transparent; }
+.action-btn span { font-size: 24px; margin-bottom: 8px; display: block; }
+.action-btn:active { background: #e0d8ca; }
+
+/* Fields */
+.fields-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
+.fields-header h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin: 0; }
+.gold-link { color: var(--gold); font-size: 12px; text-decoration: underline; }
+.field-item { margin-bottom: 16px; }
+.f-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; font-weight: 500; }
+.status { font-size: 10px; font-weight: 700; letter-spacing: 1px; }
+.status.green { color: var(--green); }
+.status.gold { color: var(--gold); }
+.status.red { color: var(--red); }
+.status.bg { padding: 4px 8px; border-radius: 4px; background: rgba(39, 165, 88, 0.1); }
+.progress-bar { height: 6px; background: #e2dfd5; border-radius: 3px; overflow: hidden; }
+.progress-bar .fill { height: 100%; border-radius: 3px; }
+.fill.green { background: var(--green); }
+.fill.gold { background: var(--gold); }
+.fill.red { background: var(--red); }
+.hero-image { margin: 0 24px 100px; height: 160px; background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=600&auto=format&fit=crop') center/cover; border-radius: 12px; }
+
+/* Bottom Nav */
+.bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--card-cream); display: flex; justify-content: space-around; padding: 12px 0 24px; border-top: 1px solid #e2dfd5; z-index: 100;}
+.nav-item { text-align: center; color: #aaa; cursor: pointer; }
+.nav-item.active { color: var(--gold); }
+.nav-item .n-icon { font-size: 20px; margin-bottom: 4px; }
+.nav-item span { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; }
+
+/* Scanner */
+.scanner-view { position: relative; height: 60vh; background: url('https://images.unsplash.com/photo-1592841200221-a6898f307ba4?q=80&w=600&auto=format&fit=crop') center/cover; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; margin-top: -80px;}
+.glass-pill { position: absolute; background: rgba(255,255,255,0.9); padding: 8px 12px; border-radius: 20px; font-size: 10px; display: flex; align-items: center; gap: 8px; }
+.glass-pill.top-right { top: 90px; right: 24px; }
+.vision-active { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); background: #1A2F25; color: white; padding: 6px 12px; border-radius: 20px; font-size: 10px; letter-spacing: 1px; width:120px;text-align:center;}
+.bounding-box { position: absolute; top: 45%; left: 50%; width: 200px; height: 200px; transform: translate(-50%, -50%); border: 2px solid var(--gold); }
+.scan-actions { position: absolute; bottom: -20px; left: 24px; right: 24px; display: flex; justify-content: space-between; gap: 10px;}
+
+.scanner-content { margin-top: 60px; padding: 0 24px; }
+.scanner-content h4 { font-family: 'Playfair Display', serif; font-size: 16px; margin: 0 0 16px; }
+.crop-pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px;}
+.cpill { background: white; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1px solid #e0dbce; white-space: nowrap; }
+
+/* Profit Calc */
+.lbl { font-size: 10px; font-weight: 700; color: var(--text-dark); letter-spacing: 1px; display: block; margin-bottom: 8px; }
+.inp { background: transparent; border: none; border-bottom: 1px solid #ccc; font-size: 16px; padding-bottom: 4px; margin-bottom: 20px; width: 100%; outline: none; }
+.cost-row { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 12px; }
+.roi-circle { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--gold); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 24px; color: var(--text-dark); }
+.advice-card { background: var(--text-dark); color: white; padding: 24px; border-radius: 12px; }
+.advice-card p { font-size: 13px; line-height: 1.6; color: #ddd; }
+
+/* Schemes */
+.s-filter { font-size: 12px; padding: 8px 16px; border-radius: 20px; border: 1px solid #ddd; white-space: nowrap; cursor:pointer;}
+.s-filter.active { background: var(--text-dark); color: white; border-color: var(--text-dark); }
+.s-badge { font-size: 10px; font-weight: bold; background: #faebd7; color: var(--gold-dark); padding: 4px 8px; border-radius: 4px; display: inline-block; }
+
+/* Livestock Planner */
+.ls-card { background: var(--card-cream); border: 1px solid transparent; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: 0.2s; }
+.ls-card.active { background: #f2fae6; border-color: var(--gold); }
+.ls-card .ls-icon { font-size: 24px; margin-bottom: 8px; color: var(--gold); }
+.ls-card .ls-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.ls-card .ls-sub { font-size: 10px; color: #888; }
+
